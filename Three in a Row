@@ -1,0 +1,279 @@
+//Author: Ben McGahee
+//Title: Three in a Row
+//Date: 3/25/2016
+//Purpose:  Three in a Row is a game you play against the computer.  You and the computer pick a number between 1 and 100.
+//To get the other two numbers in the sequence, you add 1 to the previous number to get the next number.
+//For example, if you choose the number 10, then your sequence is 10, 11, 12.
+//You and the computer take turn guessing one of the numbers in the opponent's sequence.
+//The first player to find all three numbers in their opponent's sequence wins the game.
+
+//Include the input/output library.
+#include<iostream>
+
+//These libraries are good for the computer to pick the random numbers.
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+using namespace std;
+
+//Here is an introduction to the game and how to play Three in a Row.
+void introduction()
+{
+    cout << "Welcome to three in a row! \n";
+    cout << "Here is how the game works... \n";
+    cout << "You and the computer pick a number between 1 and 100. \n";
+    cout << "Then you and the computer pick two other numbers that follow in succession of the first number. \n";
+    cout << "That makes it three in a row. \n";
+    cout << "Both you and the computer take turns guessing each others' numbers.";
+    cout << "The object of the game is to be the first player to guess the opponent's sequence of numbers. \n";
+    cout << "Let's begin! \n";
+}
+
+//This function introduces and starts the game.
+void game()
+{
+    //Winning conditions for the human player and computer.
+    bool humanWins = false;
+    bool computerWins = false;
+
+    //Initialize the human and computer number picks between 1 and 100.
+    int humanNumber = 0;
+    int computerNumber = 0;
+
+    //Set the arrays to store the sequences of numbers for both the human player and computer.
+    int humanSequence[3];
+    int computerSequence[3];
+
+    //Initialize the human's guess and computer's guess.
+    int humanGuess = 0;
+    int computerGuess = 0;
+
+    //Initialize total number of guesses for human and computer.
+    int totalHumanGuesses = 0;
+    int totalComputerGuesses = 0;
+
+    //Initialize total number of correct guesses for human and computer.
+    int humanCorrect = 0;
+    int computerCorrect = 0;
+
+    //Maximum number of correct guesses is 3 to win the game.
+    const int maxCorrect = 3;
+
+    //Initialize the count variables for computer's correct guesses.
+    //These variables are used to not repeat any correct numbers.
+    int countHumanNumber = 0;
+    int countNextHumanNumber = 0;
+    int countLastHumanNumber = 0;
+
+    //Initialize the count variables for the human's correct guesses.
+    //These variables are used to not repeat any correct numbers.
+    int countComputerNumber = 0;
+    int countNextComputerNumber = 0;
+    int countLastComputerNumber = 0;
+
+    //Introduce the game.
+    introduction();
+
+    //Name of human player.
+    string name;
+
+    cout << "What is your name? ";
+    cin >> name;
+
+    cout << name << ", pick a number between 1 and 100. ";
+    cin  >> humanNumber;
+
+    //This loop runs until the player enters a number between 1 and 100.
+    while(humanNumber < 1 || humanNumber > 100)
+    {
+        cout << name << ", pick a number between 1 and 100. ";
+        cin  >> humanNumber;
+    }
+
+    //Store the player's three in a row numbers in the humanSequence array.
+    humanSequence[0] = humanNumber;
+    humanSequence[1] = humanNumber + 1;
+    humanSequence[2] = humanNumber + 2;
+
+    //Used to generate the random numbers.
+    srand(time(NULL));
+
+    cout << " \nNow the computer picks a number between 1 and 100... \n";
+    computerNumber = rand() % 100 + 1;
+
+    //Store the computer's three in a row numbers in the computerSequence array.
+    computerSequence[0] = computerNumber;
+    computerSequence[1] = computerNumber + 1;
+    computerSequence[2] = computerNumber + 2;
+
+    //You get the first guess.
+    cout << "You have the first guess...Good luck! \n";
+
+    //This is the game loop where the game play takes palce until the someone wins.
+    while(humanCorrect != maxCorrect || computerCorrect != maxCorrect)
+    {
+        cout << name << ", guess one of the computer's numbers: ";
+        cin >> humanGuess;
+
+        //Case where player guesses the computer's first number.
+        //Increment number of correct guesses, total guesses, and the guess of computer's first number by 1.
+        if(humanGuess == computerSequence[0] && countComputerNumber < 1)
+        {
+            cout << humanGuess << " is correct! \n";
+            humanCorrect += 1;
+            totalHumanGuesses += 1;
+            countComputerNumber += 1;
+        }
+        //Case where player has already guessed the computer's first number correctly.
+        else if(humanGuess == computerSequence[0] && countComputerNumber >= 1)
+        {
+            cout << "You have already guessed this number correctly.";
+        }
+        //Case where player guesses the computer's second number.
+        //Increment the first two values, and the guess of computer's second number by 1.
+        else if(humanGuess == computerSequence[1] && countNextComputerNumber < 1)
+        {
+            cout << humanGuess << " is correct! \n";
+            humanCorrect += 1;
+            totalHumanGuesses += 1;
+            countNextComputerNumber += 1;
+        }
+        //Case where player has already guessed the computer's second number correctly.
+        else if(humanGuess == computerSequence[1] && countNextComputerNumber >= 1)
+        {
+            cout << "You have already guessed this number correctly.";
+        }
+        //Case where player guesses the computer's third number.
+        //Increment the first two values, and the guess of computer's third number by 1.
+        else if(humanGuess == computerSequence[2] && countLastComputerNumber < 1)
+        {
+            cout << humanGuess << " is correct! \n";
+            humanCorrect += 1;
+            totalHumanGuesses += 1;
+            countLastComputerNumber += 1;
+        }
+          //Case where player has already guessed the computer's last number correctly.
+        else if(humanGuess == computerSequence[2] && countLastComputerNumber >= 1)
+        {
+            cout << "You have already guessed this number correctly.";
+        }
+        //Case where the player does not guess any of the computer's numbers correctly.
+        else
+        {
+           cout << "Sorry, that is not one of the computer's numbers. \n";
+           totalHumanGuesses += 1;
+        }
+
+        //Checks player's winning condition.
+        //If it's true, break out of the loop to end the game.
+        if(humanCorrect == maxCorrect)
+            {
+                humanWins = true;
+                break;
+            }
+
+        //It is the computer's turn to guess.
+        cout << "Computer, guess one of " << name << "'s numbers. \n";
+
+       //Case where computer has not made any correct guesses and picks a random number.
+       //Increment total number of guesses by 1.
+       if(computerCorrect < 1)
+          computerGuess = rand() % 100 + 1;
+          totalComputerGuesses += 1;
+
+       //Case where computer guesses the player's first number.
+       //Increment the number of correct guesses, total guesses, and number of times the computer guessed this number by 1.
+       //Also, the computer will guess the next number in the player's sequence.
+       if(computerGuess == humanSequence[0] && countHumanNumber < 1)
+       {
+          cout << "The computer's guess is " << computerGuess << ". \n";
+          cout << "The computer is correct! \n";
+          computerCorrect += 1;
+          totalComputerGuesses += 1;
+          countHumanNumber += 1;
+          computerGuess += 1;
+       }
+       //Case where computer guesses the player's second number.
+       //Increment the same values as before by 1.
+       else if(computerGuess == humanSequence[1] && countNextHumanNumber < 1)
+       {
+           cout << "The computer's guess is " << computerGuess << ". \n";
+           cout << "The computer is correct! \n";
+           computerCorrect += 1;
+           totalComputerGuesses += 1;
+           countNextHumanNumber += 1;
+           computerGuess += 1;
+       }
+       //Case where computer guesses the player's third number.
+       //Increment the same values as before by 1.
+       else if(computerGuess == humanSequence[2] && countLastHumanNumber < 1)
+       {
+           cout << "The computer's guess is " << computerGuess << ". \n";
+           cout << "The computer is correct! \n";
+           computerCorrect += 1;
+           totalComputerGuesses += 1;
+           countLastHumanNumber += 1;
+           computerGuess -= 2;
+       }
+       //The case where the computer did not make any correct guesses.
+       //Increment total guesses by 1.
+        else
+        {
+            cout << "The computer's guess is " << computerGuess << ". \n";
+            cout << "The computer is not correct. \n";
+            totalComputerGuesses += 1;
+        }
+
+        //Check computer's winning condition.
+        //If the computer won, break out of the loop, and the game is over.
+        if(computerCorrect == maxCorrect)
+         {
+             computerWins = true;
+             break;
+         }
+      }
+
+      //Case where human wins and is congratulated for his/her victory.
+      //Tells you how many guesses it took for you to win the game.
+      if(humanWins)
+      {
+          cout << "Congratulations " << name << ", you beat the computer! \n";
+          cout << "It took you " << totalHumanGuesses << " guesses to win the game.";
+       }
+       //Case where computer wins and tells you how many guesses it took for the computer to win the game.
+       else if(computerWins)
+       {
+          cout << "Unfortunately, the computer won.  Better luck next time...";
+          cout << "It took the computer " << totalComputerGuesses << " guesses to win the game.";
+       }
+    }
+
+//Main loop for the game.
+int main()
+{
+    game();
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
